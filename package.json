@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
     "npm": "node start",
-    "start":"node index"
+    "start": "node index"
   },
   "keywords": [
     "crypto",
@@ -17,8 +17,10 @@
   "author": "hammed",
   "license": "ISC",
   "dependencies": {
+    "apisauce": "^3.0.1",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
+    "coinpayments": "^2.2.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

@@ -2,7 +2,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
-ErrorClass = require("../utils/errorClass");
+const ErrorMessage = require("../utils/errorMessage");
 
 const protect = asyncHandler(async (req, res, next) => {
   const token = req?.cookies?.token?.split(" ")[ 1 ] || req?.headers?.token?.split(" ")[ 1 ];
@@ -17,11 +17,18 @@ const protect = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.log(error.message);
-    return next(new ErrorClass("unauthorized request, please login", 401));
+    return next(new ErrorMessage("unauthorized request, please login", 401));
   }
 })
 
+const authorize = (...role) => {
+  return asyncHandler(async (req, res, next) => {
+    if(!role.includes(req.user.role)) return next(new ErrorMessage("unauthorized request", 401));
+    next();
+  })
+}
+
 module.exports = {
-  protect
+  protect,
+  authorize
 }

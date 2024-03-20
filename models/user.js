@@ -10,8 +10,19 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique:true
   },
+  accountBarred: {
+    type: Boolean,
+    default: false
+  },
+  role: {
+    type: String,
+    default: "user",
+    enum: ["user", "admin"]
+  },
   email: {
     type: String,
+    unique: true,
+    default:null
   },
   password: {
     type: String,
@@ -25,6 +36,14 @@ const userSchema = new mongoose.Schema({
   uid: {
     type: String,
     required: true
+  },
+  rank:{
+    type: Number,
+    default:0
+  },
+  transactionPin: {
+    type: String,
+    default: null
   },
   balance:Number,
   token: String,
@@ -66,7 +85,7 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 userSchema.methods.getResetPasswordToken = function () {
 
   // generate token.
-  const token = crypto.randomBytes(6).toString("utf-8")
+  const token = crypto.randomBytes(3).toString("hex").toLocaleUpperCase();
  
   // hash token and set to the resetPasswordToken field;
   this.token = crypto.createHash("sha256")
@@ -74,9 +93,9 @@ userSchema.methods.getResetPasswordToken = function () {
                               .digest("hex");
 
   // set expire duration to 10 mins.
-  this.tokenExpiration = Date.now() + 10 * 60 * 1000;
+  this.tokenExpiration = Date.now() + 60 * 60 * 1000;
 
-  return resetToken
+  return token
 }
 
 module.exports = mongoose.model("User", userSchema);
