@@ -76,6 +76,9 @@ const login = asynchandler(async (req, res, next) => {
     message: "incorrect phone or password"
   });
 
+  // check if account not barred
+  if(user.accountBarred) return next(new ErrorMessage(" sorry, your account has been barred plese contact support", 401));
+
   // get user from database without password...
   const getLoggedInUser = await User.findOne({ phone: req.body.phone });
 

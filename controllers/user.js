@@ -18,7 +18,7 @@ const getUsers = asyncHandler(async (req, res, next) => {
   const data = await paginate(User, req);
   res.json({
     success: true,
-    data
+    ...data
   })
 });
 

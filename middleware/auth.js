@@ -15,6 +15,7 @@ const protect = asyncHandler(async (req, res, next) => {
       httpOnly: true
     });
     req.user = user;
+    if(user.accountBarred) return next(new ErrorMessage(" sorry, your account has been barred plese contact support", 401));
     next();
   } catch (error) {
     return next(new ErrorMessage("unauthorized request, please login", 401));

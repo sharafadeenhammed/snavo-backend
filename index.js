@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require("morgan");
 const errorHandeler = require('./utils/errorHandeler');
+const ErrorMessage = require('./utils/errorMessage');
 const cors = require('cors');
 const dotenv = require("dotenv");
 dotenv.config();
@@ -25,6 +26,10 @@ app.use("/auth", auth);
 app.use("/coin", coinPayment);
 app.use("/user", user);
 
+// handling 404 not found error;
+app.use((req, res, next) => {
+  return next(new ErrorMessage("not found", 404));
+})
 
 app.use(errorHandeler);
 

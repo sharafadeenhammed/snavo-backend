@@ -4,12 +4,16 @@ const routes = require('express').Router();
 const { protect, authorize } = require("../middleware/auth");
 const {
   getUser,
-  getUsers
+  getUsers,
+  updateUser
 } = require("../controllers/user");
 
 
 
-routes.get("/:id", protect, getUser);
+routes.route("/:id")
+  .get(protect, getUser)
+  .put(protect, authorize("admin"), updateUser);
+
 routes.get("/", protect, authorize("admin"), getUsers);
 
 module.exports = routes;
