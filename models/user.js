@@ -22,17 +22,33 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    default:null
+    default: null,
+    required:[true, "please enter your email"]
+  },
+  fullname: {
+    type: String,
+    required: [true, "please enter your full name"]
   },
   password: {
     type: String,
-    required: true,
+    required: [true, "password is required"],
     select:false
   },
   referalCode: {
     type: String
   },
-  registerationReferalCode: String,
+  registerationReferalId: {
+    type: mongoose.Types.ObjectId,
+    default: null
+  },
+  refererCount: {
+    type: Number,
+    default: 0
+  },
+  validReferCount: {
+    type: Number,
+    default: 0
+  },
   uid: {
     type: String,
     required: true

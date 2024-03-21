@@ -1,4 +1,3 @@
-const { default: mongoose } = require("mongoose");
 const Mongoose = require("mongoose");
 
 
@@ -8,11 +7,11 @@ const referalSchema = new Mongoose.Schema({
     required: true
   },
   referedById: {
-    type: mongoose.Types.ObjectId,
+    type: Mongoose.Types.ObjectId,
     required: true
   },
-  referalUserId: {
-    type: mongoose.Types.ObjectId,
+  userId: {
+    type: Mongoose.Types.ObjectId,
     required: true
   }
 }, {

@@ -6,6 +6,8 @@ const ErrorMessage = require("../utils/errorMessage");
 const paginate = require("../utils/paginate");
 const { registerationSchema, loginSchema } = require("../utils/validationSchema");
 const User = require("../models/user.js");
+const Recharge = require("../models/recharge");
+const Referal = require("../models/referal");
 
 
 //@desc     register
@@ -13,6 +15,7 @@ const User = require("../models/user.js");
 //@access   Public
 const register = asynchandler(async (req, res, next) => {
   const defaultReferalCode = "EJFDS";
+  let refererUser = {};
   // check if passwords match code is valid
   if(req.body.password !== req.body.confirmPassword)
     return next(new ErrorMessage("password and confirm password does not match", 400));
@@ -22,7 +25,17 @@ const register = asynchandler(async (req, res, next) => {
   if (validate.error) {
     return next(new ErrorMessage(validate.error.details[0].message,400));
   }
-  
+
+  // find referer user
+  if (defaultReferalCode !== req.body.referalCode) {
+    refererUser = await User.findOne({ referalCode: req.body.referalCode });
+  }
+
+  if (refererUser._id) {
+    refererUser.refererCount = refererUser.refererCount + 1;
+    await refererUser.save();
+  }
+
   // constructing completed user data object
   const userData = {
     ...req.body,
@@ -35,20 +48,29 @@ const register = asynchandler(async (req, res, next) => {
       length: 8,
       charset: "alphabetic"
     }).toUpperCase(),
-    registerationReferalCode : defaultReferalCode === req.body.referalCode ? "" : req.body.referalCode
+    registerationReferalId : refererUser?._id || null,
   }
 
   const user = await User.create(userData);
   const createdUser = await User.findById(user._id);
   const token = createdUser.getSignedJwtToken();
 
-  res.cookie("token",token , {
+  res.cookie("token", token, {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
   }).json({
     success: true,
     user: createdUser,
     token
-  })
+  });
+
+  // create sign up bonus recharge
+  const recharge = await Recharge.create({
+    amount: 3.00,
+    rechargeType: "bonus",
+    status: "Success",
+    userId: user._id
+  });
+
 
 })
 
