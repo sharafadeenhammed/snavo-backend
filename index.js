@@ -11,6 +11,7 @@ const auth = require('./routes/auth')
 const coinPayment = require('./routes/coinPayments')
 const user = require('./routes/user')
 const recharge = require("./routes/recharge")
+const withdraw = require("./routes/withdraw")
 
 const connectDb = require('./db/connect');
 
@@ -27,6 +28,7 @@ app.use("/auth", auth);
 app.use("/coin", coinPayment);
 app.use("/user", user);
 app.use("/recharge", recharge);
+app.use("/withdraw", withdraw);
 
 // handling 404 not found error;
 app.use((req, res, next) => {

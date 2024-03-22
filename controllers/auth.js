@@ -41,11 +41,11 @@ const register = asynchandler(async (req, res, next) => {
     ...req.body,
     balance:3.00,
     uid:randomString.generate({
-      length: 6,
+      length: 8,
       charset: "numeric"
     }),
     referalCode: randomString.generate({
-      length: 8,
+      length: 10,
       charset: "alphabetic"
     }).toUpperCase(),
     registerationReferalId : refererUser?._id || null,
