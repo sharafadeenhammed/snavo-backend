@@ -1,6 +1,6 @@
 const asynchandler = require("express-async-handler");
 const ErrorMessage = require("../utils/errorMessage");
-const returnecharge = require("../models/recharge");
+const Recharge = require("../models/recharge");
 
 //@desc     get recharge history
 //@route    get recharge/:status
