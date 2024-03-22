@@ -13,8 +13,17 @@ const getCoinAddress = asynchandler(async (req, res, next) => {
   res.status(200).json({
     ...response
   })
+})
+
+//@desc     get coin address
+//@route    get|post coin/confirm
+//@access   public
+ const validatePayment = asynchandler(async (req, res, next) => {
+   console.log("body: ", req.body);
+   console.log("params: ", req.params);
  })
 
 module.exports = {
-  getCoinAddress
+  getCoinAddress,
+  validatePayment
 }

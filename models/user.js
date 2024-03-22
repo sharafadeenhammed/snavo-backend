@@ -1,10 +1,10 @@
 
-const mongoose = require("mongoose")
+const Mongoose = require("mongoose")
 const bcrypt = require("bcryptjs")
 const crypto = require("crypto")
 const jwt = require("jsonwebtoken")
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Mongoose.Schema({
   phone: {
     type: String,
     required: true,
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
     type: String
   },
   registerationReferalId: {
-    type: mongoose.Types.ObjectId,
+    type: Mongoose.Types.ObjectId,
     default: null
   },
   refererCount: {
@@ -56,6 +56,10 @@ const userSchema = new mongoose.Schema({
   rank:{
     type: Number,
     default:0
+  },
+  totalIncome: {
+    type: Number,
+    default: 0
   },
   transactionPin: {
     type: String,
@@ -114,4 +118,4 @@ userSchema.methods.getResetPasswordToken = function () {
   return token
 }
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = Mongoose.model("User", userSchema);

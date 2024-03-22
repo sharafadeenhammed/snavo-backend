@@ -10,6 +10,7 @@ dotenv.config();
 const auth = require('./routes/auth')
 const coinPayment = require('./routes/coinPayments')
 const user = require('./routes/user')
+const recharge = require("./routes/recharge")
 
 const connectDb = require('./db/connect');
 
@@ -25,6 +26,7 @@ app.use(morgan("dev"))
 app.use("/auth", auth);
 app.use("/coin", coinPayment);
 app.use("/user", user);
+app.use("/recharge", recharge);
 
 // handling 404 not found error;
 app.use((req, res, next) => {

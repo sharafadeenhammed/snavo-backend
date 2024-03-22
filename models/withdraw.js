@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const Mongoose = require("mongoose");
 
 
 const rechargeSchema = new Mongoose.Schema({
@@ -16,7 +16,7 @@ const rechargeSchema = new Mongoose.Schema({
     enum: ["Pending", "Failed", "Success"]
   },
   userId: {
-    type: mongoose.Types.ObjectId,
+    type: Mongoose.Types.ObjectId,
     required: true
   }
 }, {

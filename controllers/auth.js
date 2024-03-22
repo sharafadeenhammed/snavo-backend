@@ -66,7 +66,7 @@ const register = asynchandler(async (req, res, next) => {
   // create sign up bonus recharge
   const recharge = await Recharge.create({
     amount: 3.00,
-    rechargeType: "bonus",
+    rechargeType: "reward",
     status: "Success",
     userId: user._id
   });

@@ -1,12 +1,16 @@
 const Mongoose = require("mongoose");
 
 
-const rechargeSchema = new Mongoose.Schema({
+const invertmentSchema = new Mongoose.Schema({
   amount: {
     type: Number,
     required: true
   },
-  rechargeType: {
+  packageName: {
+    type: String,
+    required:[true, "please enter package name"]
+  },
+  investmentType: {
     type: String,
     required: true
   },
@@ -17,11 +21,8 @@ const rechargeSchema = new Mongoose.Schema({
   },
   userId: {
     type: Mongoose.Types.ObjectId,
-    required: [ true, "Please provide user id" ],
-    ref: "User"
+    required: true
   }
 }, {
   timestamps: true
 })
-
-module.exports = Mongoose.model("Recharge", rechargeSchema);

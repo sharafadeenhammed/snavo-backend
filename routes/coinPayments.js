@@ -1,14 +1,16 @@
 const router = require("express").Router();
 const {
-  protect
+  protect,
+
 } = require("../middleware/auth")
 const {
-  getCoinAddress
+  getCoinAddress,
+  validatePayment
 } = require("../controllers/coinPayment")
 
 router.get("/get-payment-address", protect, getCoinAddress);
-router.post("/confirm", protect, getCoinAddress);
-router.get("/confirm", protect, getCoinAddress);
+router.post("/confirm", validatePayment);
+router.get("/confirm", validatePayment);
 
 
 
