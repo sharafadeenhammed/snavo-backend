@@ -5,6 +5,9 @@ const User = require("../models/user");
 const paginate = require("../utils/paginate");
 const ErrorMessage = require("../utils/errorMessage");
 
+//@desc     find single user
+//@route    GET /user/:id
+//@access   Private
 const getUser = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if(!user) return next(new ErrorMessage("user not found", 404));
@@ -14,6 +17,9 @@ const getUser = asyncHandler(async (req, res, next) => {
   })
 }) 
 
+//@desc     get users
+//@route    GET /user
+//@access   Private (admin only)
 const getUsers = asyncHandler(async (req, res, next) => {
   const data = await paginate(User, req);
   res.json({
@@ -22,6 +28,9 @@ const getUsers = asyncHandler(async (req, res, next) => {
   })
 });
 
+//@desc     get recharge history
+//@route    PUT recharge/:status
+//@access   Private (admin only)
 const updateUser = asyncHandler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
     new: true,

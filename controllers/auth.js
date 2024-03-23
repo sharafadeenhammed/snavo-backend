@@ -8,6 +8,9 @@ const { registerationSchema, loginSchema } = require("../utils/validationSchema"
 const User = require("../models/user.js");
 const Recharge = require("../models/recharge");
 const Referal = require("../models/referal");
+const {
+  get_callaback
+} = require("../utils/coin");
 
 
 //@desc     register
@@ -26,15 +29,6 @@ const register = asynchandler(async (req, res, next) => {
     return next(new ErrorMessage(validate.error.details[0].message,400));
   }
 
-  // find referer user
-  if (defaultReferalCode !== req.body.referalCode) {
-    refererUser = await User.findOne({ referalCode: req.body.referalCode });
-  }
-
-  if (refererUser._id) {
-    refererUser.refererCount = refererUser.refererCount + 1;
-    await refererUser.save();
-  }
 
   // constructing completed user data object
   const userData = {
@@ -52,12 +46,31 @@ const register = asynchandler(async (req, res, next) => {
   }
 
   const user = await User.create(userData);
+
+  // get coin address for user
+  const coinAddress = await get_callaback("USDT", user);
+
+  // update user with coin address.
+  user.coinAddress = coinAddress.address;
+  await user.save();
+
+   // find referer user
+   if (defaultReferalCode !== req.body.referalCode) {
+    refererUser = await User.findOne({ referalCode: req.body.referalCode });
+  }
+
+  if (refererUser) {
+    refererUser.refererCount = refererUser.refererCount + 1;
+    await refererUser.save();
+  }
+
+  // find user in database
   const createdUser = await User.findById(user._id);
   const token = createdUser.getSignedJwtToken();
 
   res.cookie("token", token, {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  }).json({
+  }).status(201).json({
     success: true,
     user: createdUser,
     token

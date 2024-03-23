@@ -65,6 +65,10 @@ const userSchema = new Mongoose.Schema({
     type: String,
     default: null
   },
+  coinAddress: {
+    type: String,
+    default: ""
+  },
   balance:Number,
   token: String,
   tokenExpiration: Date,
