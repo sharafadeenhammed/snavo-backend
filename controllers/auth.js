@@ -18,7 +18,7 @@ const {
 //@access   Public
 const register = asynchandler(async (req, res, next) => {
   const defaultReferalCode = "EJFDS";
-  let refererUser = {};
+  let refererUser = null;
   // check if passwords match code is valid
   if(req.body.password !== req.body.confirmPassword)
     return next(new ErrorMessage("password and confirm password does not match", 400));
@@ -59,7 +59,7 @@ const register = asynchandler(async (req, res, next) => {
     refererUser = await User.findOne({ referalCode: req.body.referalCode });
   }
 
-  if (refererUser) {
+  if (refererUser._id) {
     refererUser.refererCount = refererUser.refererCount + 1;
     await refererUser.save();
   }
@@ -91,14 +91,16 @@ const register = asynchandler(async (req, res, next) => {
 //@route    POST auth/login
 //@access   Public
 const login = asynchandler(async (req, res, next) => {
-  // validate user input...
-  const validate = loginSchema.validate(req.body);
-  if (validate.error) {
-    return next(new ErrorMessage(validate.error.details[ 0 ].message, 400));
-  }
-
-  // find user in database...
-  const user = await User.findOne({ phone: req.body.phone }).select("+password");
+  
+  let user = null;
+  
+  // login with phone...
+  if(req.body.channel === "phone")
+    user = await User.findOne({ phone: req.body.to }).select("+password");
+  
+  // login with email...
+  if(req.body.channel === "email")
+    user = await User.findOne({ email: req.body.to }).select("+password");
 
   // if user not found...
   if (!user) {
@@ -115,7 +117,7 @@ const login = asynchandler(async (req, res, next) => {
   if(user.accountBarred) return next(new ErrorMessage(" sorry, your account has been barred plese contact support", 401));
 
   // get user from database without password...
-  const getLoggedInUser = await User.findOne({ phone: req.body.phone });
+  const getLoggedInUser = await User.findById(user._id);
 
   // generate auth token...
   const token = getLoggedInUser.getSignedJwtToken();

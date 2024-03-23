@@ -11,7 +11,6 @@ const joi = require("joi")
   // email: joi.string().email({ minDomainSegments: 2, tlds: { allow: [ 'com', 'net' ] } })
 })
  const loginSchema = joi.object({
-  phone: joi.string().required().trim(),
   password: joi.string().required().min(8),
 })
 
