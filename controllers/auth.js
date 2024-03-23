@@ -29,6 +29,10 @@ const register = asynchandler(async (req, res, next) => {
     return next(new ErrorMessage(validate.error.details[0].message,400));
   }
 
+  // find referer user
+  if (defaultReferalCode !== req.body.referalCode) {
+    refererUser = await User.findOne({ referalCode: req.body.referalCode });
+  }
 
   // constructing completed user data object
   const userData = {
@@ -54,15 +58,7 @@ const register = asynchandler(async (req, res, next) => {
   user.coinAddress = coinAddress.address;
   await user.save();
 
-   // find referer user
-   if (defaultReferalCode !== req.body.referalCode) {
-    refererUser = await User.findOne({ referalCode: req.body.referalCode });
-  }
-
-  if (refererUser._id) {
-    refererUser.refererCount = refererUser.refererCount + 1;
-    await refererUser.save();
-  }
+   
 
   // find user in database
   const createdUser = await User.findById(user._id);
@@ -75,6 +71,11 @@ const register = asynchandler(async (req, res, next) => {
     user: createdUser,
     token
   });
+
+  if (refererUser) {
+    refererUser.refererCount = refererUser.refererCount + 1;
+    await refererUser.save();
+  }
 
   // create sign up bonus recharge
   const recharge = await Recharge.create({
