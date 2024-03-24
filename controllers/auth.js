@@ -20,13 +20,13 @@ const register = asynchandler(async (req, res, next) => {
   const defaultReferalCode = "EJFDS";
   let refererUser = null;
   // check if passwords match code is valid
-  if(req.body.password !== req.body.confirmPassword)
+  if (req.body.password !== req.body.confirmPassword)
     return next(new ErrorMessage("password and confirm password does not match", 400));
 
   // validate user input...
   const validate = registerationSchema.validate(req.body);
   if (validate.error) {
-    return next(new ErrorMessage(validate.error.details[0].message,400));
+    return next(new ErrorMessage(validate.error.details[ 0 ].message, 400));
   }
 
   // find referer user
@@ -37,8 +37,8 @@ const register = asynchandler(async (req, res, next) => {
   // constructing completed user data object
   const userData = {
     ...req.body,
-    balance:3.00,
-    uid:randomString.generate({
+    balance: 3.00,
+    uid: randomString.generate({
       length: 8,
       charset: "numeric"
     }),
@@ -46,7 +46,7 @@ const register = asynchandler(async (req, res, next) => {
       length: 10,
       charset: "alphabetic"
     }).toUpperCase(),
-    registerationReferalId : refererUser?._id || null,
+    registerationReferalId: refererUser?._id || null,
   }
 
   const user = await User.create(userData);
@@ -84,9 +84,7 @@ const register = asynchandler(async (req, res, next) => {
     status: "Success",
     userId: user._id
   });
-
-
-})
+});
 
 //@desc     register
 //@route    POST auth/login
@@ -105,13 +103,13 @@ const login = asynchandler(async (req, res, next) => {
 
   // if user not found...
   if (!user) {
-    return next(new ErrorMessage("incorrect phone or password", 404));
+    return next(new ErrorMessage("incorrect login credentials", 404));
   }
 
   // validate password...
   if (!await user.matchPassword(req.body.password)) return res.status(400).json({
     success: false,
-    message: "incorrect phone or password"
+    message: "incorrect login credentials"
   });
 
   // check if account not barred
