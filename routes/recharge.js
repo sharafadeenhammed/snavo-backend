@@ -1,11 +1,13 @@
 const routes = require('express').Router();
 const { protect, authorize } = require("../middleware/auth");
 const {
-  getRecharge
+  getRecharge,
+  getRecharges
 } = require("../controllers/recharge");
 
 
-routes.get("/:status", protect, getRecharge);
+routes.get("/", protect, getRecharges);
+routes.get("/:id", protect, getRecharge);
 
 
 

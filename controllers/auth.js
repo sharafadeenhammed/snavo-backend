@@ -86,7 +86,7 @@ const register = asynchandler(async (req, res, next) => {
   });
 });
 
-//@desc     register
+//@desc     login
 //@route    POST auth/login
 //@access   Public
 const login = asynchandler(async (req, res, next) => {
@@ -142,7 +142,7 @@ const getLoggedInUser = asynchandler(async (req, res, next) => {
   });
 });
 
-//@desc     get token
+//@desc     get token for password/auth purposes
 //@route    POST /auth/gettoken
 //@access   Public
 const getToken = asynchandler(async (req, res, next) => {
@@ -171,6 +171,9 @@ const getToken = asynchandler(async (req, res, next) => {
   
 });
 
+//@desc     login
+//@route    POST auth/login
+//@access   Private(admin)
 const getUser = asynchandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if(!user) return next(new ErrorMessage("user not found", 404));
@@ -180,11 +183,15 @@ const getUser = asynchandler(async (req, res, next) => {
   })
 })
 
+//@desc     login
+//@route    POST auth/login
+//@access   Private(admin)
 const getUsers = asynchandler(async (req, res, next) => {
-  const users = await User.find();
+  // const users = await User.find();
+  const data = await paginate(User, req);
   res.status(200).json({
     success: true,
-    users
+    ...data
   })
 })
 
@@ -194,5 +201,6 @@ module.exports = {
   login,
   getLoggedInUser,
   getToken,
-  getUser
+  getUser,
+  getUsers
 }

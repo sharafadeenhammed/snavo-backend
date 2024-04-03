@@ -1,7 +1,7 @@
 
 
 async function errorHandeler(data, req, res, next) {
-  // console.log(data);
+  console.log(data);
   if (data.code === 11000) {
     data.statusCode = 400
     const fields = Object.keys(data.keyValue).join(" and ")

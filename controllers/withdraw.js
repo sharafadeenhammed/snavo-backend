@@ -2,6 +2,7 @@ const asynchandler = require("express-async-handler");
 const ErrorMessage = require("../utils/errorMessage");
 const Withdraw = require("../models/withdraw");
 const User = require("../models/user");
+const paginate = require("../utils/paginate");
 
 //@desc     apply for withdrawal
 //@route    POST /withdraw/:coin
@@ -33,40 +34,13 @@ const applyForWithdrawal = asynchandler(async (req, res, next) => {
 //@route    GET /withdraw/:status
 //@access   Private
 const getWithdrawals = asynchandler(async (req, res, next) => {
-  const status = req.params.status;
-  if (status === "All") {
-    const data = await Withdraw.find({ userId: req.user._id }).sort({ createdAt: -1 });
-    res.status(200).json({
-      success: true,
-      data
-    });
-    return;
-  }
-
-  // if status does not match
-  if (status !== "Success" && status !== "Pending" && status !== "Failed") {
-
-    const data = await Withdraw.findById(req.params.id);
-    // if withdrawal not found.
-    if (!data) return next(new ErrorMessage("Withdrawal not found", 404));
-
-    // validate user
-    if (data.userId !== req.user._id && req.user.role !== "admin")
-      return next(new ErrorMessage("You not authorized to access this resource!", 401))
-
-    // succesful response
-      res.status(200).json({
-        success: true,
-        data
-      })
-      
-    return;
-  }
-  const data = await Withdraw.find({ userId: req.user._id, status: req.params.status }).sort({ createdAt: -1 });
+  // const status = req.params.status;
+  const data = await paginate(Withdraw, req, { userId: req.user._id });
   res.status(200).json({
     success: true,
-    data
-  });
+    ...data
+  })
+
 });
 
 //@desc     authorize withdrawal request
@@ -75,6 +49,7 @@ const getWithdrawals = asynchandler(async (req, res, next) => {
 const approveWithdrawal = asynchandler(async (req, res, next) => {
   const withdrawal = await Withdraw.findById(req.params.id);
   if (!withdrawal) return next(new ErrorMessage("withdrawal not found", 404))
+  if(withdrawal.userId !== req.user._id && req.user.role !== "admin") return next(new ErrorMessage("unauthorized access", 401))
   const user = await User.findById(withdrawal.userId);
   withdrawal.status = "Success";
   await withdrawal.save();
