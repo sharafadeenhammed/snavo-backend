@@ -47,12 +47,10 @@ const getWithdrawals = asynchandler(async (req, res, next) => {
 //@route    PUT /withdraw/approve/:id
 //@access   Private (admin)
 const approveWithdrawal = asynchandler(async (req, res, next) => {
-  const withdrawal = await Withdraw.findById(req.params.id);
-  if (!withdrawal) return next(new ErrorMessage("withdrawal not found", 404))
-  if(withdrawal.userId !== req.user._id && req.user.role !== "admin") return next(new ErrorMessage("unauthorized access", 401))
-  const user = await User.findById(withdrawal.userId);
-  withdrawal.status = "Success";
-  await withdrawal.save();
+  const data = await Withdraw.findById(req.params.id);
+  if (!data) return next(new ErrorMessage("withdrawal not found", 404))
+  data.status = "Success";
+  await data.save();
   // TODO: send succesful withdrawal email/sms notification to user.
 
 });
@@ -78,7 +76,7 @@ const declineWithdrawal = asynchandler(async (req, res, next) => {
 const getWithdrawal = asynchandler(async (req, res, next) => {
   const data = await Withdraw.findById(req.params.id);
   if (!data) return next(new ErrorMessage("", 404));
-  if (data.userId !== req.user._id && req.user.role !== "admin")
+  if (!data.userId.equals(req.user._id) && req.user.role !== "admin")
     return next(new ErrorMessage("You not authorized to access this resource!", 401))
   res.status(200).json({
     success: true,

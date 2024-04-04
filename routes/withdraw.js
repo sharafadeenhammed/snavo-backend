@@ -14,7 +14,7 @@ routes.post("/:coin", protect, applyForWithdrawal);
 routes.get("/", protect, getWithdrawals);
 routes.get("/:id", protect, getWithdrawal);
 routes.put("/approve/:id", protect, authorize("admin"), approveWithdrawal);
-routes.put("/dcline/:id", protect, authorize("admin"), declineWithdrawal);
+routes.put("/decline/:id", protect, authorize("admin"), declineWithdrawal);
 
 
 
