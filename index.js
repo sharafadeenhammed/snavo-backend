@@ -1,6 +1,8 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require("morgan");
+const mongoSanitize = require("express-mongo-sanitize");
+const helmet = require("helmet");
 const errorHandeler = require('./utils/errorHandeler');
 const ErrorMessage = require('./utils/errorMessage');
 const cors = require('cors');
@@ -12,17 +14,18 @@ const coinPayment = require('./routes/coinPayments')
 const user = require('./routes/user')
 const recharge = require("./routes/recharge")
 const withdraw = require("./routes/withdraw")
-
 const connectDb = require('./db/connect');
+const app = express();
 
-const app = express()
 connectDb();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./public'));
 app.use(cookieParser());  
-app.use(morgan("dev"))
+app.use(morgan("dev"));
+app.use(mongoSanitize());
+app.use(helmet());
 
 app.use("/auth", auth);
 app.use("/coin", coinPayment);

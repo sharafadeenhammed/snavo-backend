@@ -1,15 +1,16 @@
 
 
 const paginate = async (Model, req, appFilter = {}) => {
-  const { page = 1, limit = 15 } = req.query;
+  const { page = 1, limit = 15, filter={} } = req.query;
   const startIndex = (Number(page) - 1) * Number(limit);
   const endIndex = Number(page) * Number(limit);
-  const filter = req.query || {};
-  delete filter.page;
-  delete filter.limit;
-  delete filter.sort;
-  delete filter.sortBy;
-  let query = Model.find({ ...filter, ...appFilter })
+  const filterBy = req.query || {};
+  delete filterBy.page;
+  delete filterBy.limit;
+  delete filterBy.sort;
+  delete filterBy.sortBy;
+  delete filterBy.filter;
+  let query = Model.find({ ...filterBy, ...appFilter })
   query.limit(Number(limit));
   query.skip(startIndex);
   if (req.query.sort === "desc" && req.query.sortBy) {
@@ -29,6 +30,7 @@ const paginate = async (Model, req, appFilter = {}) => {
   const totalCount = await Model.countDocuments();
   return {
     data,
+    count: data.length,
     next: endIndex < totalCount ? { page: Number(page) + 1, limit } : null,
     prev: startIndex > 0 ? { page: Number(page) - 1, limit } : null,
     perPage: limit,

@@ -17,7 +17,7 @@ const getRecharges = asynchandler(async (req, res, next) => {
 const getRecharge = asynchandler(async (req, res, next) => {
   const data = await Recharge.findById(req.params.id);
   if (!data) return next(new ErrorMessage("recharge not found", 404));
-  if(!data.userId.equals(req.user._id)) return next(new ErrorMessage("unauthorized access", 401));
+  if(data.userId.toString() !== req.user._id.toString() && req.user.role !== "admin") return next(new ErrorMessage("unauthorized access", 401));
   res.status(200).json({
     success: true,
     data

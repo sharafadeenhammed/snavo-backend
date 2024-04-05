@@ -75,9 +75,9 @@ const declineWithdrawal = asynchandler(async (req, res, next) => {
 //@access   Private 
 const getWithdrawal = asynchandler(async (req, res, next) => {
   const data = await Withdraw.findById(req.params.id);
-  if (!data) return next(new ErrorMessage("", 404));
-  if (!data.userId.equals(req.user._id) && req.user.role !== "admin")
-    return next(new ErrorMessage("You not authorized to access this resource!", 401))
+  if (!data) return next(new ErrorMessage("withdrawal not found", 404));
+  if (data.userId.toString() !== req.user._id.toString() && req.user.role !== "admin")
+    return next(new ErrorMessage("unauthorized access to this resource!", 401))
   res.status(200).json({
     success: true,
     data
